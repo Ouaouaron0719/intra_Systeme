@@ -11,6 +11,8 @@ add_executable(420J12
         src/component.h
         src/render_component.h
         src/render_component.cpp
+        src/token.h
+        src/bag.h
 )
 
 # 只用 SDL3 核心

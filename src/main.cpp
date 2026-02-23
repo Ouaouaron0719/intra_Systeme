@@ -6,6 +6,9 @@
 
 #include <SDL3/SDL.h>
 #include "render_component.h"
+#include <random>
+#include "token.h"
+#include "bag.h"
 
 /*
  *
@@ -93,7 +96,57 @@ class GameApp final
 		SDL_Time time;
 		SDL_GetCurrentTime (&time);
 		SDL_srand (time);
+		// ===== Q3: Spawn Tokens + Bag =====
+		int winW = 800, winH = 600;
+		SDL_GetWindowSize(Window, &winW, &winH);
 
+		// 随机数（用 C++ random，别依赖 SDL_rand 避免版本坑）
+		std::mt19937 rng(static_cast<uint32_t>(SDL_GetPerformanceCounter()));
+		std::uniform_int_distribution<int> tokenCountDist(10, 20);
+		std::uniform_int_distribution<int> stateDist(0, 2);
+
+		const float tokenW = 40.f, tokenH = 40.f;
+		std::uniform_real_distribution<float> xDist(0.f, static_cast<float>(winW) - tokenW);
+		std::uniform_real_distribution<float> yDist(0.f, static_cast<float>(winH / 2) - tokenH);
+
+		int tokenCount = tokenCountDist(rng);
+
+		for (int i = 0; i < tokenCount; ++i)
+		{
+			std::unique_ptr<TokenPointState> st;
+			switch (stateDist(rng))
+			{
+				case 0: st = std::make_unique<NormalTokenState>(); break;
+				case 1: st = std::make_unique<SuperTokenState>(); break;
+				default: st = std::make_unique<OmegaTokenState>(); break;
+			}
+
+			auto t = std::make_unique<Token>(std::move(st));
+
+			float x = xDist(rng);
+			float y = yDist(rng);
+
+			t->AddComponent<TransformComponent>(x, y, tokenW, tokenH);
+			t->AddComponent<RectangleRenderComponent>(t->PointState->Color(), true);
+
+			Entities.push_back(std::move(t));
+		}
+
+		// Bag：下半屏居中
+		{
+			const float bagW = 120.f, bagH = 150.f;
+			const float centerX = winW * 0.5f;
+			const float centerY = winH * 0.75f; // 下半屏中心 = 3/4 高度
+
+			float bagX = centerX - bagW * 0.5f;
+			float bagY = centerY - bagH * 0.5f;
+
+			auto b = std::make_unique<Bag>();
+			b->AddComponent<TransformComponent>(bagX, bagY, bagW, bagH);
+			b->AddComponent<RectangleRenderComponent>(SDL_Color{220, 220, 120, 255}, true);
+
+			Entities.push_back(std::move(b));
+		}
 		// for (int i = 0; i < 500; ++i)
 		// 	{
 		// 		auto e = std::make_unique<Entity> ();
