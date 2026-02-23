@@ -55,10 +55,10 @@ public:
             c->Update(app, *this, dt);
     }
 
-    void Draw(GameApp& app)
+    void Draw(SDL_Renderer* renderer)
     {
         for (auto& c : Components)
-            c->Draw(app, *this);
+            c->Draw(*this, renderer);
     }
 
 private:

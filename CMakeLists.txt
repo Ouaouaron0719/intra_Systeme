@@ -9,6 +9,8 @@ add_executable(420J12
         src/main.cpp
         src/entity.cpp
         src/component.h
+        src/render_component.h
+        src/render_component.cpp
 )
 
 # 只用 SDL3 核心

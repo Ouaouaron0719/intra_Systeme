@@ -17,7 +17,7 @@ public:
 
     virtual void HandleEvent(GameApp& app, Entity& owner, const SDL_Event& e) {}
     virtual void Update(GameApp& app, Entity& owner, float dt) {}
-    virtual void Draw(GameApp& app, Entity& owner) {}
+    virtual void Draw(Entity& owner, SDL_Renderer* renderer) {}
 };
 
 #endif //INC_420J12_COMPONENT_H

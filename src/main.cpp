@@ -5,6 +5,7 @@
 #include <vector>
 
 #include <SDL3/SDL.h>
+#include "render_component.h"
 
 /*
  *
@@ -93,11 +94,17 @@ class GameApp final
 		SDL_GetCurrentTime (&time);
 		SDL_srand (time);
 
-		for (int i = 0; i < 500; ++i)
-			{
-				auto e = std::make_unique<Entity> ();
-				Entities.push_back (std::move (e));
-			}
+		// for (int i = 0; i < 500; ++i)
+		// 	{
+		// 		auto e = std::make_unique<Entity> ();
+		// 		Entities.push_back (std::move (e));
+		// 	}
+		auto e = std::make_unique<Entity>();
+
+		e->AddComponent<TransformComponent>(100.f, 120.f, 160.f, 90.f);
+		e->AddComponent<RectangleRenderComponent>(SDL_Color{220, 80, 80, 255}, true);
+
+		Entities.push_back(std::move(e));
 	}
 
 	~GameApp ()
@@ -172,7 +179,7 @@ main (int argc, char *argv[])
 			for (auto& ent : app->Entities)
 			{
 				if (ent->Alive)
-					ent->Draw(*app);
+					ent->Draw(app->Renderer);
 			}
 			SDL_Point win_size = { 0 };
 			SDL_GetWindowSize (app->Window, &win_size.x, &win_size.y);
