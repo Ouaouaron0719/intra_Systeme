@@ -15,6 +15,7 @@ add_executable(420J12
         src/bag.h
         src/drag_state.h
         src/drag_component.h
+        src/game_state.h
 )
 
 # 只用 SDL3 核心

@@ -10,6 +10,7 @@
 #include "token.h"
 #include "bag.h"
 #include "drag_component.h"
+#include "game_state.h"
 /*
  *
  * Consignes de remises) Créez un nouveau répertoire git et soumettez-le sur votre GitHub personnel.
@@ -66,6 +67,7 @@ class GameApp final
   public:
 	SDL_Window *Window = nullptr;
 	SDL_Renderer *Renderer = nullptr;
+	Bag *BagPtr = nullptr;
 	bool keyboard[SDL_SCANCODE_COUNT] = { false };
 	std::vector<std::unique_ptr<Entity>> Entities;
 
@@ -145,6 +147,8 @@ class GameApp final
 			b->AddComponent<TransformComponent>(bagX, bagY, bagW, bagH);
 			b->AddComponent<RectangleRenderComponent>(SDL_Color{220, 220, 120, 255}, true);
 
+
+			GameState::BagPtr = b.get();
 			Entities.push_back(std::move(b));
 		}
 		// for (int i = 0; i < 500; ++i)
@@ -176,10 +180,12 @@ class GameApp final
 			{
 				FrameTimes.erase (FrameTimes.begin ());
 			}
+
 		const float sum = std::accumulate (FrameTimes.begin (), FrameTimes.end (), 0.0f);
 		const float average = sum / static_cast<float> (FrameTimes.size ());
 		SampleAverageFPS = average > 0 ? 1.0f / average : 0;
 	}
+
 };
 
 Sint32
@@ -255,7 +261,10 @@ main (int argc, char *argv[])
 				}
 			SDL_SetRenderDrawColor (app->Renderer, 255, 255, 255, 255);
 			SDL_RenderDebugTextFormat (app->Renderer, 5, 5, "%.2f FPS", displayed);
-
+			if (GameState::BagPtr)
+			{
+				SDL_RenderDebugTextFormat(app->Renderer, 5, 25, "Score: %d", GameState::BagPtr->Score);
+			}
 			SDL_RenderPresent (app->Renderer);
 		}
 	return 0;

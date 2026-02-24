@@ -11,11 +11,24 @@
 #include "entity.h"
 #include "render_component.h"
 #include "drag_state.h"
+#include "token.h"
+#include "bag.h"
+#include "game_state.h"
 
 // 小工具：点是否在矩形内
 inline bool PointInRect(float px, float py, const SDL_FRect& r)
 {
     return px >= r.x && px <= (r.x + r.w) && py >= r.y && py <= (r.y + r.h);
+}
+//Q5
+inline bool Intersects(const SDL_FRect& a, const SDL_FRect& b)
+{
+    const float aRight = a.x + a.w;
+    const float aBottom = a.y + a.h;
+    const float bRight = b.x + b.w;
+    const float bBottom = b.y + b.h;
+
+    return (a.x < bRight) && (aRight > b.x) && (a.y < bBottom) && (aBottom > b.y);
 }
 
 class DragComponent final : public Component
@@ -63,6 +76,23 @@ public:
             {
                 Dragging = false;
                 State = std::make_unique<NotSelectedState>();
+
+                // ===== Q5: Collect if dropped on Bag =====
+                if (GameState::BagPtr != nullptr)
+                {
+                    auto* bagTr = GameState::BagPtr->GetComponent<TransformComponent>();
+                    auto* myTr  = owner.GetComponent<TransformComponent>();
+
+                    if (bagTr && myTr && Intersects(myTr->Rect, bagTr->Rect))
+                    {
+                        // owner 必须是 Token 才能加分
+                        if (auto* tok = dynamic_cast<Token*>(&owner))
+                        {
+                            GameState::BagPtr->AddScore(tok->GetPoints());
+                            owner.Alive = false; // 不画即可（简单稳）
+                        }
+                    }
+                }
             }
         }
     }
