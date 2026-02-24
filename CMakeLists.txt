@@ -13,6 +13,8 @@ add_executable(420J12
         src/render_component.cpp
         src/token.h
         src/bag.h
+        src/drag_state.h
+        src/drag_component.h
 )
 
 # 只用 SDL3 核心

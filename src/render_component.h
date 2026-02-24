@@ -31,6 +31,9 @@ public:
     SDL_Color Color{255, 255, 255, 255};
     bool Filled = true;
 
+    SDL_Color Outline{0,0,0,0};
+    bool DrawOutline = false;
+
     RectangleRenderComponent() = default;
     explicit RectangleRenderComponent(SDL_Color c, bool filled = true)
         : Color(c), Filled(filled) {}

@@ -15,4 +15,9 @@ void RectangleRenderComponent::Draw(Entity& owner, SDL_Renderer* renderer)
         SDL_RenderFillRect(renderer, &tr->Rect);
     else
         SDL_RenderRect(renderer, &tr->Rect);
+    if (DrawOutline && Outline.a > 0)
+    {
+        SDL_SetRenderDrawColor(renderer, Outline.r, Outline.g, Outline.b, Outline.a);
+        SDL_RenderRect(renderer, &tr->Rect);
+    }
 }

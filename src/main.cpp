@@ -9,7 +9,7 @@
 #include <random>
 #include "token.h"
 #include "bag.h"
-
+#include "drag_component.h"
 /*
  *
  * Consignes de remises) Créez un nouveau répertoire git et soumettez-le sur votre GitHub personnel.
@@ -128,7 +128,7 @@ class GameApp final
 
 			t->AddComponent<TransformComponent>(x, y, tokenW, tokenH);
 			t->AddComponent<RectangleRenderComponent>(t->PointState->Color(), true);
-
+			t->AddComponent<DragComponent>();
 			Entities.push_back(std::move(t));
 		}
 
@@ -152,12 +152,13 @@ class GameApp final
 		// 		auto e = std::make_unique<Entity> ();
 		// 		Entities.push_back (std::move (e));
 		// 	}
-		auto e = std::make_unique<Entity>();
-
-		e->AddComponent<TransformComponent>(100.f, 120.f, 160.f, 90.f);
-		e->AddComponent<RectangleRenderComponent>(SDL_Color{220, 80, 80, 255}, true);
-
-		Entities.push_back(std::move(e));
+		//Q2 testing
+		// auto e = std::make_unique<Entity>();
+		//
+		// e->AddComponent<TransformComponent>(100.f, 120.f, 160.f, 90.f);
+		// e->AddComponent<RectangleRenderComponent>(SDL_Color{220, 80, 80, 255}, true);
+		//
+		// Entities.push_back(std::move(e));
 	}
 
 	~GameApp ()
