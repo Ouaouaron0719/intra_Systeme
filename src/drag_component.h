@@ -21,6 +21,9 @@ inline bool PointInRect(float px, float py, const SDL_FRect& r)
 class DragComponent final : public Component
 {
 public:
+    bool Dragging = false;
+    float OffsetX = 0.f;
+    float OffsetY = 0.f;
     std::unique_ptr<DragState> State = std::make_unique<NotSelectedState>();
 
     void HandleEvent(GameApp& app, Entity& owner, const SDL_Event& e) override
@@ -34,11 +37,33 @@ public:
             float my = static_cast<float>(e.button.y);
 
             if (PointInRect(mx, my, tr->Rect))
-                State = std::make_unique<SelectedState>();
+            {
+                // 进入拖拽：记录鼠标点相对矩形左上角的偏移
+                Dragging = true;
+                OffsetX = mx - tr->Rect.x;
+                OffsetY = my - tr->Rect.y;
+
+                State = std::make_unique<ClickedState>();
+            }
+        }
+        else if (e.type == SDL_EVENT_MOUSE_MOTION)
+        {
+            if (Dragging)
+            {
+                float mx = static_cast<float>(e.motion.x);
+                float my = static_cast<float>(e.motion.y);
+
+                tr->Rect.x = mx - OffsetX;
+                tr->Rect.y = my - OffsetY;
+            }
         }
         else if (e.type == SDL_EVENT_MOUSE_BUTTON_UP && e.button.button == SDL_BUTTON_LEFT)
         {
-            State = std::make_unique<NotSelectedState>();
+            if (Dragging)
+            {
+                Dragging = false;
+                State = std::make_unique<NotSelectedState>();
+            }
         }
     }
     void Update(GameApp& app, Entity& owner, float dt) override
